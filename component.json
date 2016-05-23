@@ -34,12 +34,12 @@
     "segmentio/facade": "1.x",
     "segmentio/is-email": "0.1.1",
     "segmentio/is-meta": "0.0.1",
-    "segmentio/isodate-traverse": "0.3.x",
+    "segmentio/isodate-traverse": "0.3.3",
     "segmentio/json": "1.0.0",
-    "segmentio/new-date": "0.3.x",
+    "segmentio/new-date": "0.3.1",
     "segmentio/store.js": "2.0.0",
     "segmentio/top-domain": "2.0.1",
-    "visionmedia/debug": "0.7.x",
+    "visionmedia/debug": "0.7.4",
     "yields/prevent": "0.0.2"
   },
   "development": {
