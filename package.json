@@ -18,7 +18,7 @@
     "node": ">=0.12.0",
     "npm": ">=2.7.0"
   },
-  "main": "analytics.js",
+  "main": "build/analytics.js",
   "scripts": {
     "eslint": "eslint components core routes test tools",
     "stylelint": "stylelint \"components/**/*.css\" \"routes/**/*.css\"",
@@ -75,7 +75,9 @@
     "file-loader": "^0.8.5",
     "front-matter": "^2.0.7",
     "git-repository": "^0.1.4",
+    "istanbul": "^0.4.3",
     "json-loader": "^0.5.4",
+    "karma-webpack": "^1.7.0",
     "mocha": "^2.4.5",
     "phantomjs": "^1.9.16",
     "s3": "^4.4.0",
