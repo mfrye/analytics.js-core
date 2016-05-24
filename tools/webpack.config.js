@@ -35,7 +35,7 @@ const config = {
   output: {
     path: path.resolve(__dirname, '../build'),
     publicPath: '/',
-    file: 'analytics.js',
+    filename: 'analytics.js',
     sourcePrefix: '  ',
   },
 
@@ -77,6 +77,7 @@ const config = {
         include: [
           path.resolve(__dirname, '../lib'),
         ],
+        exclude: /(node_modules)/,
         loader: 'babel-loader',
         query: extend({}, pkg.babel, { babelrc: false }),
       },
