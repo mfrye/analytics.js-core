@@ -14,8 +14,10 @@ const extend = require('extend');
 const pkg = require('../package.json');
 var ComponentPlugin = require("component-webpack-plugin");
 
-const isDebug = !(process.argv.includes('--release') || process.argv.includes('-r'));
-const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v');
+// const isDebug = !(process.argv.includes('--release') || process.argv.includes('-r'));
+// const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v');
+const isDebug = true;
+const isVerbose = false;
 
 /**
  * Webpack configuration (core/main.js => build/bundle.js)
@@ -33,7 +35,7 @@ const config = {
   output: {
     path: path.resolve(__dirname, '../build'),
     publicPath: '/',
-    file: 'build/[name].js',
+    file: 'analytics.js',
     sourcePrefix: '  ',
   },
 
