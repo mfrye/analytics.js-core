@@ -18,17 +18,87 @@
     "node": ">=0.12.0",
     "npm": ">=2.7.0"
   },
-  "main": "analytics.js",
+  "main": "build/analytics.js",
   "scripts": {
-    "test": "make test"
+    "eslint": "eslint components core routes test tools",
+    "stylelint": "stylelint \"components/**/*.css\" \"routes/**/*.css\"",
+    "lint": "npm run eslint && npm run stylelint",
+    "test": "mocha --compilers js:babel-register",
+    "test:watch": "mocha --compilers js:babel-register --reporter min --watch",
+    "clean": "node tools/clean",
+    "build": "node tools/build --release",
+    "build:debug": "node tools/build",
+    "deploy": "node tools/deploy.gh --release",
+    "start": "node tools/start"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@ndhoule/foldl": "^2.0.1",
+    "@ndhoule/includes": "^2.0.1",
+    "@segment/isodate-traverse": "^1.0.0",
+    "@segment/top-domain": "^3.0.0",
+    "bind-all": "^1.0.0",
+    "component-clone": "^0.2.2",
+    "component-each": "^0.2.6",
+    "ianstormtaylor-callback": "npmcomponent/ianstormtaylor-callback",
+    "is": "ianstormtaylor/is",
+    "map-component": "0.0.1",
+    "new-date": "git+ssh://git@github.com:mfrye/new-date.git",
+    "segmentio-facade": "git+ssh://git@github.com:mfrye/facade.git",
+    "store": "^1.3.20"
+  },
   "devDependencies": {
+    "autoprefixer": "^6.3.6",
+    "babel-cli": "^6.9.0",
+    "babel-core": "^6.9.0",
+    "babel-eslint": "^6.0.4",
+    "babel-loader": "^6.2.4",
+    "babel-plugin-transform-runtime": "^6.9.0",
+    "babel-polyfill": "^6.9.0",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-react": "^6.5.0",
+    "babel-preset-stage-1": "^6.5.0",
+    "babel-register": "^6.9.0",
+    "babel-runtime": "^6.9.0",
+    "browser-sync": "^2.12.8",
+    "chai": "^3.5.0",
+    "component-webpack-plugin": "git+ssh://git@github.com:mfrye/component-webpack-plugin.git",
+    "cpy": "^4.0.1",
+    "css-loader": "^0.23.1",
+    "del": "^2.2.0",
     "duo": "^0.12.0",
     "duo-test": "^0.4.0",
-    "eslint": "0.x",
-    "eslint-config-segment": "^1.0.7",
+    "eslint": "^2.10.2",
+    "eslint-config-airbnb": "^9.0.1",
+    "eslint-plugin-import": "^1.8.0",
+    "extend": "^3.0.0",
+    "fbjs": "^0.8.2",
+    "file-loader": "^0.8.5",
+    "front-matter": "^2.0.7",
+    "git-repository": "^0.1.4",
+    "istanbul": "^0.4.3",
+    "json-loader": "^0.5.4",
+    "karma-webpack": "^1.7.0",
+    "mocha": "^2.4.5",
     "phantomjs": "^1.9.16",
-    "uglify-js": ">= 1.3.4"
+    "s3": "^4.4.0",
+    "style-loader": "^0.13.1",
+    "stylelint": "^6.4.1",
+    "stylelint-config-standard": "^7.0.0",
+    "top-domain": "git+ssh://git@github.com:segmentio/top-domain.git",
+    "uglify-js": ">= 1.3.4",
+    "url-loader": "^0.5.7",
+    "webpack": "^1.13.0",
+    "webpack-dev-middleware": "^1.6.1",
+    "webpack-hot-middleware": "^2.10.0"
+  },
+  "babel": {
+    "presets": [
+      "react",
+      "es2015",
+      "stage-1"
+    ],
+    "plugins": [
+      "transform-runtime"
+    ]
   }
 }

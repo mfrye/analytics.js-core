@@ -1,103 +1,100 @@
-#
-# Binaries.
-#
+##
+# Binaries
+##
 
-BINS = ./node_modules/.bin
-DUO = $(BINS)/duo
-DUOT = $(BINS)/duo-test
-ESLINT = $(BINS)/eslint
-UGLIFYJS = $(BINS)/uglifyjs
+ESLINT := node_modules/.bin/eslint
+ISTANBUL := node_modules/.bin/istanbul
+KARMA := node_modules/.bin/karma
+MOCHA := node_modules/.bin/mocha
+_MOCHA := node_modules/.bin/_mocha
 
-#
-# Files.
-#
+##
+# Files
+##
 
-TESTS = $(wildcard test/*.js)
-SRC = $(wildcard lib/*.js)
-BUILD = build.js
+LIBS = $(shell find lib -type f -name "*.js")
+TESTS = $(shell find test -type f -name "*.test.js")
+SUPPORT = $(wildcard karma.conf*.js)
+ALL_FILES = $(LIBS) $(TESTS) $(SUPPORT)
 
-#
-# Task arguments.
-#
+##
+# Program options/flags
+##
 
-BROWSER ?= ie:9
+# A list of options to pass to Karma
+# Overriding this overwrites all options specified in this file (e.g. BROWSERS)
+KARMA_FLAGS ?=
 
-PORT ?= 0
+# A list of Karma browser launchers to run
+# http://karma-runner.github.io/0.13/config/browsers.html
+BROWSERS ?=
+ifdef BROWSERS
+KARMA_FLAGS += --browsers $(BROWSERS)
+endif
 
-DUOT_ARGS = \
-	--pathname test/server \
-	--reporter spec \
-	--port $(PORT) \
-	--commands "make build.js"
+ifdef CI
+KARMA_CONF ?= karma.conf.ci.js
+else
+KARMA_CONF ?= karma.conf.js
+endif
 
-#
-# Git hooks.
-#
+# Mocha flags.
+GREP ?= .
+MOCHA_REPORTER ?= spec
+MOCHA_FLAGS := \
+	--grep "$(GREP)" \
+	--reporter "$(MOCHA_REPORTER)" \
+	--ui bdd
 
-HOOKS := $(addprefix .git/hooks/, $(notdir $(wildcard bin/hooks/*)))
+# Istanbul flags.
+COVERAGE_DIR ?= coverage
+ISTANBUL_FLAGS := \
+	--root "./lib" \
+	--include-all-sources true \
+	--dir "$(COVERAGE_DIR)/Node $(shell node -v)"
 
-#
-# Chore tasks.
-#
+##
+# Tasks
+##
 
-# Install node dependencies.
+# Install node modules.
 node_modules: package.json $(wildcard node_modules/*/package.json)
 	@npm install
+	@touch $@
 
-# Remove temporary/built files.
+# Install dependencies.
+install: node_modules
+
+# Remove temporary files and build artifacts.
 clean:
-	@rm -rf $(BUILD) *.log analytics.js analytics.min.js
+	rm -rf *.log coverage
 .PHONY: clean
 
-# Remove temporary/built files and vendor dependencies.
+# Remove temporary files, build artifacts, and vendor dependencies.
 distclean: clean
-	@rm -rf components node_modules
+	rm -rf node_modules
 .PHONY: distclean
 
-#
-# Build tasks.
-#
-
-# Build analytics.js.
-analytics.js: node_modules $(SRC) package.json
-	@$(DUO) --stdout --standalone analytics lib/index.js > $@
-
-# Build minified analytics.js.
-analytics.min.js: analytics.js
-	@$(UGLIFYJS) $< --output $@
-
-# Target for build files.
-# TODO: Document this one better
-$(BUILD): analytics.js analytics.min.js $(TESTS)
-	@$(DUO) --stdout --development test/tests.js > $(BUILD)
-
-# $(BUILD) shortcut.
-build: $(BUILD)
-.PHONY: build
-
-#
-# Test tasks.
-#
-
-# Lint JavaScript source.
-lint: node_modules
-	@$(ESLINT) $(SRC) $(TESTS)
+# Lint JavaScript source files.
+lint: install
+	@$(ESLINT) $(ALL_FILES)
 .PHONY: lint
 
-# Test locally in PhantomJS.
-test: node_modules lint $(BUILD)
-	@$(DUOT) $(DUOT_ARGS) phantomjs
+# Attempt to fix linting errors.
+fmt: install
+	@$(ESLINT) --fix $(ALL_FILES)
+.PHONY: fmt
+
+# Run unit tests in node.
+test-node: install
+	@NODE_ENV=test $(ISTANBUL) cover $(ISTANBUL_FLAGS) $(_MOCHA) -- $(MOCHA_FLAGS) $(TESTS)
+.PHONY: test-node
+
+# Run browser unit tests in a browser.
+test-browser: install
+	@$(KARMA) start $(KARMA_FLAGS) $(KARMA_CONF)
+
+# Default test target.
+test: lint test-node test-browser
 .PHONY: test
 .DEFAULT_GOAL = test
-
-# Test locally in the browser.
-test-browser: node_modules lint $(BUILD)
-	@$(DUOT) $(DUOT_ARGS) browser
-.PHONY: test-browser
-
-# Test with Sauce Labs.
-test-sauce: node_modules lint $(BUILD)
-	@$(DUOT) $(DUOT_ARGS) saucelabs \
-		--browsers $(BROWSER) \
-		--title analytics.js
-.PHONY: test-sauce
